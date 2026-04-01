@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --background: #f9fafb;
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Cairo', Arial, Helvetica, sans-serif;
+  direction: rtl;
+}
+
+/* Custom scrollbar for RTL */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Recharts RTL fixes */
+.recharts-wrapper {
+  direction: ltr;
+}
+
+.recharts-legend-wrapper {
+  direction: rtl;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Global dark-mode fallbacks for pages that still use light-only Tailwind classes */
+.dark .bg-white {
+  background-color: #111827;
+}
+
+.dark .bg-gray-50 {
+  background-color: #1f2937;
+}
+
+.dark .bg-gray-100 {
+  background-color: #374151;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: #374151;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800 {
+  color: #f3f4f6;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #d1d5db;
+}
+
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover {
+  background-color: #374151;
+}
+
+.dark .hover\:text-gray-900:hover {
+  color: #f9fafb;
+}
