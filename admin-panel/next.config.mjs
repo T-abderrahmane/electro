@@ -1,14 +1,27 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        __dirname: false,
-        path: false,
-        fs: false,
-      };
-    }
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      __dirname: false,
+      __filename: false,
+      path: false,
+      fs: false,
+    };
+    
+    // Add a global __dirname polyfill
+    config.plugins = [
+      ...config.plugins,
+      {
+        apply: (compiler) => {
+          compiler.hooks.beforeCompile.tap('DirnamePlugin', () => {
+            global.__dirname = '/';
+            global.__filename = 'app.js';
+          });
+        },
+      },
+    ];
+    
     return config;
   },
   async headers() {
