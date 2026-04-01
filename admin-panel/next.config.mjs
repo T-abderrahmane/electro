@@ -1,23 +1,20 @@
-import webpack from 'webpack';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        __dirname: JSON.stringify('/'),
-        __filename: JSON.stringify('index.js'),
-      })
-    );
-
+  webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      path: false,
-      fs: false,
-      os: false,
+      'child_process': false,
+      'fs': false,
+      'path': false,
+      'os': false,
+      '__dirname': false,
+      '__filename': false,
     };
 
     return config;
+  },
+  experimental: {
+    esmExternals: false,
   },
   async headers() {
     return [
