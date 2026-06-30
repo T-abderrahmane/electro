@@ -66,7 +66,7 @@ export default function UsersPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">{tx('إدارة المستخدمين', 'Gestion des utilisateurs')}</h1>
-        <p className="text-gray-500 mt-1">{tx('عرض وإدارة جميع مستخدمي المنصة', 'Afficher et gerer tous les utilisateurs de la plateforme')}</p>
+        <p className="text-gray-500 mt-1">{tx('عرض وإدارة جميع مستخدمي المنصة', 'Afficher et gérer tous les utilisateurs de la plateforme')}</p>
       </div>
 
       {/* Stats */}
@@ -118,9 +118,9 @@ export default function UsersPage() {
               onChange={(e) => setRoleFilter(e.target.value)}
               className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">{tx('جميع الأدوار', 'Tous les roles')}</option>
+              <option value="all">{tx('جميع الأدوار', 'Tous les rôles')}</option>
               <option value="client">{tx('عملاء', 'Clients')}</option>
-              <option value="electrician">{tx('كهربائيين', 'Electriciens')}</option>
+              <option value="electrician">{tx('كهربائيين', 'Électriciens')}</option>
             </select>
           </div>
 
@@ -144,10 +144,10 @@ export default function UsersPage() {
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('المستخدم', 'Utilisateur')}</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('رقم الهاتف', 'Telephone')}</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('رقم الهاتف', 'Téléphone')}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الدور', 'Role')}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الحالة', 'Statut')}</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('تاريخ التسجيل', 'Date d inscription')}</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('تاريخ التسجيل', "Date d'inscription")}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الإجراءات', 'Actions')}</th>
               </tr>
             </thead>
@@ -273,7 +273,7 @@ export default function UsersPage() {
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              {tx('هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.', 'Voulez-vous vraiment supprimer cet utilisateur ? Cette action est irreversible.')}
+              {tx('هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.', 'Voulez-vous vraiment supprimer cet utilisateur ? Cette action est irréversible.')}
             </p>
             <div className="flex gap-3">
               <button

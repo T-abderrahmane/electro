@@ -76,7 +76,7 @@ export default function RequestsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">{tx('إدارة الطلبات', 'Gestion des demandes')}</h1>
-        <p className="text-gray-500 mt-1">{tx('عرض وإدارة جميع طلبات الخدمة', 'Afficher et gerer toutes les demandes de service')}</p>
+        <p className="text-gray-500 mt-1">{tx('عرض وإدارة جميع طلبات الخدمة', 'Afficher et gérer toutes les demandes de service')}</p>
       </div>
 
       {/* Stats */}
@@ -120,7 +120,7 @@ export default function RequestsPage() {
               <CheckCircle className="text-green-600" size={24} />
             </div>
             <div>
-              <p className="text-gray-500 text-sm">{tx('مغلقة', 'Fermees')}</p>
+              <p className="text-gray-500 text-sm">{tx('مغلقة', 'Fermées')}</p>
               <p className="text-2xl font-bold text-green-600">{closedCount}</p>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function RequestsPage() {
               <option value="all">{tx('جميع الحالات', 'Tous les statuts')}</option>
               <option value="open">{tx('مفتوح', 'Ouvert')}</option>
               <option value="assigned">{tx('قيد التنفيذ', 'En cours')}</option>
-              <option value="closed">{tx('مغلق', 'Ferme')}</option>
+              <option value="closed">{tx('مغلق', 'Fermé')}</option>
             </select>
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function RequestsPage() {
                     <button
                       onClick={() => closeRequest(request.id)}
                       className="px-4 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
-                      title={tx('إغلاق الطلب', 'Fermer demande')}
+                      title={tx('إغلاق الطلب', 'Fermer la demande')}
                     >
                       <CheckCircle size={16} />
                     </button>
@@ -361,7 +361,7 @@ export default function RequestsPage() {
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                   >
                     <CheckCircle size={18} />
-                    <span>{tx('إغلاق الطلب', 'Fermer demande')}</span>
+                    <span>{tx('إغلاق الطلب', 'Fermer la demande')}</span>
                   </button>
                 )}
                 <button
@@ -386,7 +386,7 @@ export default function RequestsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">{tx('تأكيد الحذف', 'Confirmer suppression')}</h3>
+              <h3 className="text-lg font-bold text-gray-900">{tx('تأكيد الحذف', 'Confirmer la suppression')}</h3>
               <button
                 onClick={() => {
                   setShowDeleteModal(false);

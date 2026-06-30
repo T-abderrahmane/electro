@@ -3,13 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/models.dart';
 
 class ApiService {
-  // Backend URL shared with admin panel (Next.js API routes).
-  // Override with --dart-define=API_BASE_URL=http://YOUR_HOST:3000/api
-  // Android emulator example: --dart-define=API_BASE_URL=http://10.0.2.2:3000/api
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api',
-  );
+  // Production API URL - hardcoded for reliability
+  static const String baseUrl = 'https://electro-appa.vercel.app/api';
   
   // Singleton pattern
   static final ApiService _instance = ApiService._internal();

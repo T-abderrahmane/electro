@@ -13,25 +13,12 @@ class AppProvider extends ChangeNotifier {
   String? _preferredApiBaseUrl;
 
   List<String> get _apiBaseUrls {
-    const overridden = String.fromEnvironment('API_BASE_URL', defaultValue: '');
-    if (overridden.isNotEmpty) {
-      return [overridden];
-    }
-
-    if (kIsWeb) {
-      return const ['http://localhost:3000/api', 'http://localhost:3001/api'];
-    }
-
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return const [
-        'http://10.0.2.2:3000/api',
-        'http://10.0.2.2:3001/api',
-        'http://localhost:3000/api',
-        'http://localhost:3001/api',
-      ];
-    }
-
-    return const ['http://localhost:3000/api', 'http://localhost:3001/api'];
+    // Use production API URL as primary, with fallback
+    return const [
+      'https://electro-r2le.onrender.com/api',
+      'http://localhost:3000/api',
+      'http://localhost:3001/api',
+    ];
   }
 
   User? _currentUser;
@@ -124,6 +111,32 @@ class AppProvider extends ChangeNotifier {
     }
 
     throw Exception('Failed POST $path. Last error: $lastError');
+  }
+
+  Future<http.Response> _putWithFallback(String path, {Object? body}) async {
+    Object? lastError;
+    final normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+
+    for (final baseUrl in _orderedApiBaseUrls) {
+      try {
+        final response = await http
+            .put(
+              Uri.parse('$baseUrl/$normalizedPath'),
+              headers: _headers,
+              body: body,
+            )
+            .timeout(_requestTimeout);
+
+        if (response.statusCode != 404) {
+          _preferredApiBaseUrl = baseUrl;
+          return response;
+        }
+      } catch (e) {
+        lastError = e;
+      }
+    }
+
+    throw Exception('Failed PUT $path. Last error: $lastError');
   }
 
   String? _extractApiError(String body) {
@@ -242,101 +255,82 @@ class AppProvider extends ChangeNotifier {
 
     final messagesResponse = await _getWithFallback('/messages');
 
-    if (requestsResponse.statusCode != 200 ||
-        offersResponse.statusCode != 200 ||
-        messagesResponse.statusCode != 200) {
-      throw Exception('Failed to load remote data');
+    if (requestsResponse.statusCode != 200) {
+      _requests = [];
+    } else {
+      final requestsJson = jsonDecode(requestsResponse.body) as List<dynamic>;
+      _requests = requestsJson
+          .map((raw) => raw as Map<String, dynamic>)
+          .map(
+            (r) => ServiceRequest(
+              id: r['id']?.toString() ?? '',
+              clientId: r['clientId']?.toString() ?? '',
+              clientName: r['clientName']?.toString() ?? '',
+              title: r['title']?.toString() ?? (r['serviceType']?.toString() ?? 'Service request'),
+              description: r['description']?.toString() ?? '',
+              images: r['images'] is List
+                  ? List<String>.from(r['images'] as List)
+                  : <String>[],
+              wilaya: r['wilaya']?.toString() ?? '',
+              commune: r['commune']?.toString() ?? '',
+              status: _requestStatusFromApi(r['status']?.toString()),
+              createdAt: DateTime.tryParse(r['createdAt']?.toString() ?? '') ??
+                  DateTime.now(),
+              assignedElectricianId: r['assignedElectricianId']?.toString(),
+              assignedElectricianName: r['assignedElectricianName']?.toString(),
+            ),
+          )
+          .toList();
     }
 
-    final requestsJson = jsonDecode(requestsResponse.body) as List<dynamic>;
-    final offersJson = jsonDecode(offersResponse.body) as List<dynamic>;
-    final messagesJson = jsonDecode(messagesResponse.body) as List<dynamic>;
+    if (offersResponse.statusCode != 200) {
+      _offers = [];
+    } else {
+      final offersJson = jsonDecode(offersResponse.body) as List<dynamic>;
+      _offers = offersJson
+          .map((raw) => raw as Map<String, dynamic>)
+          .map(
+            (o) => Offer(
+              id: o['id']?.toString() ?? '',
+              requestId: o['requestId']?.toString() ?? '',
+              electricianId: o['electricianId']?.toString() ?? '',
+              electricianName: o['electricianName']?.toString() ?? '',
+              price: (o['price'] as num?)?.toDouble() ?? 0,
+              message: o['message']?.toString() ?? o['description']?.toString() ?? '',
+              estimatedTime: o['estimatedTime']?.toString() ??
+                  o['estimatedDuration']?.toString() ??
+                  '',
+              status: _offerStatusFromApi(o['status']?.toString()),
+              createdAt: DateTime.tryParse(o['createdAt']?.toString() ?? '') ??
+                  DateTime.now(),
+              electricianExperience: (o['electricianExperience'] as num?)?.toInt() ?? 0,
+              electricianRating: (o['electricianRating'] as num?)?.toDouble(),
+            ),
+          )
+          .toList();
+    }
 
-    final loadedRequests = requestsJson
-        .map((raw) => raw as Map<String, dynamic>)
-        .map(
-          (r) => ServiceRequest(
-            id: r['id']?.toString() ?? '',
-            clientId: r['clientId']?.toString() ?? '',
-            clientName: r['clientName']?.toString() ?? '',
-            title: r['title']?.toString() ?? (r['serviceType']?.toString() ?? 'Service request'),
-            description: r['description']?.toString() ?? '',
-            images: r['images'] is List
-                ? List<String>.from(r['images'] as List)
-                : <String>[],
-            wilaya: r['wilaya']?.toString() ?? '',
-            commune: r['commune']?.toString() ?? '',
-            status: _requestStatusFromApi(r['status']?.toString()),
-            createdAt: DateTime.tryParse(r['createdAt']?.toString() ?? '') ??
-                DateTime.now(),
-            assignedElectricianId: r['assignedElectricianId']?.toString(),
-            assignedElectricianName: r['assignedElectricianName']?.toString(),
-          ),
-        )
-        .toList();
-
-    final loadedOffers = offersJson
-        .map((raw) => raw as Map<String, dynamic>)
-        .map(
-          (o) => Offer(
-            id: o['id']?.toString() ?? '',
-            requestId: o['requestId']?.toString() ?? '',
-            electricianId: o['electricianId']?.toString() ?? '',
-            electricianName: o['electricianName']?.toString() ?? '',
-            price: (o['price'] as num?)?.toDouble() ?? 0,
-            message: o['message']?.toString() ?? o['description']?.toString() ?? '',
-            estimatedTime: o['estimatedTime']?.toString() ??
-                o['estimatedDuration']?.toString() ??
-                '',
-            status: _offerStatusFromApi(o['status']?.toString()),
-            createdAt: DateTime.tryParse(o['createdAt']?.toString() ?? '') ??
-                DateTime.now(),
-            electricianExperience: (o['electricianExperience'] as num?)?.toInt() ?? 0,
-            electricianRating: (o['electricianRating'] as num?)?.toDouble(),
-          ),
-        )
-        .toList();
-
-    final loadedMessages = messagesJson
-        .map((raw) => raw as Map<String, dynamic>)
-        .map(
-          (m) => ChatMessage(
-            id: m['id']?.toString() ?? '',
-            requestId: m['requestId']?.toString() ?? '',
-            senderId: m['senderId']?.toString() ?? '',
-            senderName: m['senderName']?.toString() ?? '',
-            message: m['message']?.toString(),
-            imageUrl: m['imageUrl']?.toString(),
-            createdAt: DateTime.tryParse(m['createdAt']?.toString() ?? '') ??
-                DateTime.now(),
-            isRead: m['isRead'] == true,
-          ),
-        )
-        .toList();
-
-    // Compute offers count for each request from loaded offers
-    _requests = loadedRequests
-        .map(
-          (r) => ServiceRequest(
-            id: r.id,
-            clientId: r.clientId,
-            clientName: r.clientName,
-            title: r.title,
-            description: r.description,
-            images: r.images,
-            wilaya: r.wilaya,
-            commune: r.commune,
-            status: r.status,
-            createdAt: r.createdAt,
-            offersCount: loadedOffers.where((o) => o.requestId == r.id).length,
-            assignedElectricianId: r.assignedElectricianId,
-            assignedElectricianName: r.assignedElectricianName,
-          ),
-        )
-        .toList();
-
-    _offers = loadedOffers;
-    _messages = loadedMessages;
+    if (messagesResponse.statusCode != 200) {
+      _messages = [];
+    } else {
+      final messagesJson = jsonDecode(messagesResponse.body) as List<dynamic>;
+      _messages = messagesJson
+          .map((raw) => raw as Map<String, dynamic>)
+          .map(
+            (m) => ChatMessage(
+              id: m['id']?.toString() ?? '',
+              requestId: m['requestId']?.toString() ?? '',
+              senderId: m['senderId']?.toString() ?? '',
+              senderName: m['senderName']?.toString() ?? '',
+              message: m['message']?.toString(),
+              imageUrl: m['imageUrl']?.toString(),
+              createdAt: DateTime.tryParse(m['createdAt']?.toString() ?? '') ??
+                  DateTime.now(),
+              isRead: m['isRead'] == true,
+            ),
+          )
+          .toList();
+    }
   }
 
   void setLanguage(AppLanguage language) {
@@ -352,18 +346,18 @@ class AppProvider extends ChangeNotifier {
 
   // Initialize data
   void initializeData() {
-    void _run() async {
-      try {
-        await _loadDataFromApi();
-      } catch (_) {
-        _requests = List.from(mockRequests);
-        _offers = List.from(mockOffers);
-        _messages = List.from(mockMessages);
-      }
-      notifyListeners();
-    }
+    refreshData();
+  }
 
-    _run();
+  Future<void> refreshData() async {
+    try {
+      await _loadDataFromApi();
+    } catch (_) {
+      _requests = List.from(mockRequests);
+      _offers = List.from(mockOffers);
+      _messages = List.from(mockMessages);
+    }
+    notifyListeners();
   }
 
   // Authentication
@@ -897,6 +891,63 @@ class AppProvider extends ChangeNotifier {
           );
         }
       }
+
+      unawaited(_loadDataFromApi());
+      return true;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> completeRequest(String requestId) async {
+    if (_currentUser == null || _currentUser!.role != UserRole.electrician) {
+      return false;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      try {
+        final response = await _putWithFallback(
+          '/requests/$requestId',
+          body: jsonEncode({
+            'status': 'closed',
+            'assignedElectricianId': _currentUser!.id,
+            'assignedElectricianName': _currentUser!.name,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          _preferredApiBaseUrl = _preferredApiBaseUrl;
+        }
+      } catch (_) {
+        // Fall back to local state update below.
+      }
+
+      final requestIndex = _requests.indexWhere((r) => r.id == requestId);
+      if (requestIndex == -1) {
+        return false;
+      }
+
+      final request = _requests[requestIndex];
+      _requests[requestIndex] = ServiceRequest(
+        id: request.id,
+        clientId: request.clientId,
+        clientName: request.clientName,
+        title: request.title,
+        description: request.description,
+        images: request.images,
+        wilaya: request.wilaya,
+        commune: request.commune,
+        status: RequestStatus.closed,
+        createdAt: request.createdAt,
+        offersCount: request.offersCount,
+        assignedElectricianId: request.assignedElectricianId ?? _currentUser!.id,
+        assignedElectricianName:
+            request.assignedElectricianName ?? _currentUser!.name,
+      );
 
       unawaited(_loadDataFromApi());
       return true;

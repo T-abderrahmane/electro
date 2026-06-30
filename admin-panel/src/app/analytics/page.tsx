@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
   const requestsByStatus = [
     { name: tx('مفتوح', 'Ouvert'), value: openRequests, color: '#3B82F6' },
     { name: tx('قيد التنفيذ', 'En cours'), value: assignedRequests, color: '#F59E0B' },
-    { name: tx('مغلق', 'Ferme'), value: closedRequests, color: '#10B981' },
+    { name: tx('مغلق', 'Fermé'), value: closedRequests, color: '#10B981' },
   ];
 
   const usersByRole = [
@@ -148,7 +148,7 @@ export default function AnalyticsPage() {
         <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-5 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm">{tx('الكهربائيين النشطين', 'Electriciens actifs')}</p>
+              <p className="text-purple-100 text-sm">{tx('الكهربائيين النشطين', 'Électriciens actifs')}</p>
               <p className="text-3xl font-bold mt-1">{activeElectricians}</p>
               <p className="text-purple-100 text-xs mt-2">{tx('من أصل', 'sur')} {totalElectricians} {tx('مسجل', 'inscrits')}</p>
             </div>
@@ -334,7 +334,7 @@ export default function AnalyticsPage() {
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
           <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
             <Users size={20} className="text-purple-500" />
-            {tx('توزيع المستخدمين', 'Repartition des utilisateurs')}
+            {tx('توزيع المستخدمين', 'Répartition des utilisateurs')}
           </h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -394,7 +394,7 @@ export default function AnalyticsPage() {
               <span className="font-semibold text-gray-900 dark:text-gray-100">3.2</span>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <span className="text-gray-600 dark:text-gray-300">{tx('وقت الاستجابة المتوسط', 'Temps moyen de reponse')}</span>
+              <span className="text-gray-600 dark:text-gray-300">{tx('وقت الاستجابة المتوسط', 'Temps moyen de réponse')}</span>
               <span className="font-semibold text-gray-900 dark:text-gray-100">45 دقيقة</span>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -448,7 +448,7 @@ export default function AnalyticsPage() {
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
           <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
             <UserCheck size={20} className="text-purple-500" />
-            {tx('الكهربائيين حسب الولاية', 'Electriciens par wilaya')}
+            {tx('الكهربائيين حسب الولاية', 'Électriciens par wilaya')}
           </h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -462,7 +462,7 @@ export default function AnalyticsPage() {
                   width={80}
                 />
                 <Tooltip 
-                  formatter={(value: any) => [value, tx('كهربائي', 'electricien')]}
+                  formatter={(value: any) => [value, tx('كهربائي', 'électricien')]}
                   contentStyle={{ 
                     backgroundColor: '#111827', 
                     border: '1px solid #374151',

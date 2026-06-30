@@ -48,7 +48,7 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
               backendError ??
                   l10n.tr(
                     'فشل تسجيل الدخول. تحقق من البيانات وحاول مجددا.',
-                    'Echec de la connexion. Verifiez vos donnees et reessayez.',
+                    'Échec de la connexion. Vérifiez vos données et réessayez.',
                   ),
             ),
             backgroundColor: Colors.red,
@@ -97,7 +97,7 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
                   keyboardType: TextInputType.phone,
                   textDirection: TextDirection.ltr,
                   decoration: InputDecoration(
-                    labelText: l10n.tr('رقم الهاتف', 'Numero de telephone'),
+                    labelText: l10n.tr('رقم الهاتف', 'Numéro de téléphone'),
                     hintText: '0555123456',
                     prefixIcon: const Icon(Icons.phone),
                   ),
@@ -105,13 +105,13 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
                     if (value == null || value.isEmpty) {
                       return l10n.tr(
                         'الرجاء إدخال رقم الهاتف',
-                        'Veuillez entrer le numero de telephone',
+                        'Veuillez entrer le numéro de téléphone',
                       );
                     }
                     if (value.length < 10) {
                       return l10n.tr(
                         'رقم الهاتف غير صحيح',
-                        'Numero de telephone invalide',
+                        'Numéro de téléphone invalide',
                       );
                     }
                     return null;
@@ -148,7 +148,7 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
                     if (value.length < 6) {
                       return l10n.tr(
                         'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
-                        'Le mot de passe doit contenir au moins 6 caracteres',
+                        'Le mot de passe doit contenir au moins 6 caractères',
                       );
                     }
                     return null;
@@ -176,7 +176,7 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      l10n.tr('ليس لديك حساب؟', 'Vous n avez pas de compte ?'),
+                      l10n.tr('ليس لديك حساب؟', "Vous n'avez pas de compte ?"),
                       style: TextStyle(color: AppColors.textSecondary),
                     ),
                     TextButton(

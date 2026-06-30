@@ -179,7 +179,7 @@ export default function StatisticsPage() {
         ? tx("مفتوح", "Ouvert")
         : item.name === "قيد التنفيذ"
           ? tx("قيد التنفيذ", "En cours")
-          : tx("مغلق", "Ferme"),
+          : tx("مغلق", "Fermé"),
   }));
 
   const localizedWeeklyTrend = weeklyTrend.map((item) => ({
@@ -340,7 +340,7 @@ export default function StatisticsPage() {
           {/* Active Electricians per Wilaya */}
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tx("الكهربائيون حسب الولاية", "Electriciens par wilaya")}</h2>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tx("الكهربائيون حسب الولاية", "Électriciens par wilaya")}</h2>
               <Wrench className="w-5 h-5 text-gray-400 dark:text-gray-500" />
             </div>
             <ResponsiveContainer width="100%" height={350}>
@@ -605,7 +605,7 @@ export default function StatisticsPage() {
           {/* Top Electricians */}
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tx("أفضل الكهربائيين", "Top electriciens")}</h2>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tx("أفضل الكهربائيين", "Top électriciens")}</h2>
               <Star className="w-5 h-5 text-amber-400" />
             </div>
             <div className="space-y-4">

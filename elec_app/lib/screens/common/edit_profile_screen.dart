@@ -81,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           content: Text(
             l10n.tr(
               'تم تحديث الملف الشخصي بنجاح',
-              'Profil mis a jour avec succes',
+              'Profil mis à jour avec succès',
             ),
           ),
           backgroundColor: AppColors.success,
@@ -186,7 +186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (value.length < 3) {
                     return l10n.tr(
                       'الاسم يجب أن يكون 3 أحرف على الأقل',
-                      'Le nom doit contenir au moins 3 caracteres',
+                      'Le nom doit contenir au moins 3 caractères',
                     );
                   }
                   return null;
@@ -200,20 +200,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 keyboardType: TextInputType.phone,
                 textDirection: TextDirection.ltr,
                 decoration: InputDecoration(
-                  labelText: l10n.tr('رقم الهاتف', 'Numero de telephone'),
+                  labelText: l10n.tr('رقم الهاتف', 'Numéro de téléphone'),
                   prefixIcon: const Icon(Icons.phone),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return l10n.tr(
                       'الرجاء إدخال رقم الهاتف',
-                      'Veuillez saisir le numero de telephone',
+                      'Veuillez saisir le numéro de téléphone',
                     );
                   }
                   if (value.length < 10) {
                     return l10n.tr(
                       'رقم الهاتف غير صحيح',
-                      'Numero de telephone invalide',
+                      'Numéro de téléphone invalide',
                     );
                   }
                   return null;
@@ -227,7 +227,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller: _experienceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: l10n.tr('سنوات الخبرة', 'Annees d experience'),
+                    labelText: l10n.tr('سنوات الخبرة', "Années d'expérience"),
                     prefixIcon: const Icon(Icons.work),
                   ),
                   validator: (value) {

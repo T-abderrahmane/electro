@@ -138,6 +138,12 @@ class _HomeTab extends StatelessWidget {
                         onPressed: () {},
                       ),
                       IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: () async {
+                          await context.read<AppProvider>().refreshData();
+                        },
+                      ),
+                      IconButton(
                         icon: const Icon(Icons.language),
                         onPressed: () {
                           context.read<AppProvider>().toggleLanguage();
@@ -509,7 +515,7 @@ class _RequestCard extends StatelessWidget {
       case RequestStatus.assigned:
         return 'قيد التنفيذ';
       case RequestStatus.closed:
-        return 'مغلق';
+        return 'مكتمل';
     }
   }
 
@@ -570,7 +576,7 @@ class _RequestCard extends StatelessWidget {
                           ? 'Ouvert'
                           : _getStatusText() == 'قيد التنفيذ'
                           ? 'En cours'
-                          : 'Ferme',
+                          : 'Terminé',
                     ),
                     style: TextStyle(
                       fontSize: 12,
@@ -600,6 +606,43 @@ class _RequestCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
+            if (request.status == RequestStatus.closed &&
+                request.assignedElectricianName != null)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppColors.success.withOpacity(0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: AppColors.success,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.tr(
+                          'تم الانتهاء من هذا الطلب بواسطة ${request.assignedElectricianName}',
+                          'Cette demande a été terminée par ${request.assignedElectricianName}',
+                        ),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

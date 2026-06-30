@@ -44,7 +44,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                l10n.tr('منصة الكهربائيين', 'Plateforme des electriciens'),
+                l10n.tr('منصة الكهربائيين', 'Plateforme des électriciens'),
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 l10n.tr(
                   'اتصل بأفضل الكهربائيين في الجزائر',
-                  'Contactez les meilleurs electriciens en Algerie',
+                  'Contactez les meilleurs électriciens en Algérie',
                 ),
                 style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
@@ -65,10 +65,10 @@ class WelcomeScreen extends StatelessWidget {
               _buildFeatureItem(
                 l10n,
                 Icons.search,
-                l10n.tr('ابحث عن كهربائي', 'Trouvez un electricien'),
+                l10n.tr('ابحث عن كهربائي', 'Trouvez un électricien'),
                 l10n.tr(
                   'اعثر على كهربائيين محترفين في منطقتك',
-                  'Trouvez des professionnels pres de chez vous',
+                  'Trouvez des professionnels près de chez vous',
                 ),
               ),
               const SizedBox(height: 16),
@@ -88,7 +88,7 @@ class WelcomeScreen extends StatelessWidget {
                 l10n.tr('تواصل مباشرة', 'Communiquez directement'),
                 l10n.tr(
                   'دردش مع الكهربائي لتنسيق العمل',
-                  'Discutez avec l electricien pour organiser le travail',
+                  'Discutez avec l électricien pour organiser le travail',
                 ),
               ),
               const SizedBox(height: 32),
@@ -104,7 +104,7 @@ class WelcomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, '/electrician-login');
                 },
-                child: Text(l10n.tr('أنا كهربائي', 'Je suis electricien')),
+                child: Text(l10n.tr('أنا كهربائي', 'Je suis électricien')),
               ),
               const SizedBox(height: 24),
               ],

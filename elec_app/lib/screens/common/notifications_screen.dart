@@ -23,10 +23,10 @@ class NotificationsScreen extends StatelessWidget {
       ),
       _NotificationItem(
         id: '2',
-        title: l10n.tr('تم قبول عرضك', 'Votre offre est acceptee'),
+        title: l10n.tr('تم قبول عرضك', 'Votre offre est acceptée'),
         body: l10n.tr(
           'تم قبول عرضك على طلب "إصلاح أعطال كهربائية"',
-          'Votre offre a ete acceptee pour la demande "Reparation de pannes electriques"',
+          'Votre offre a été acceptée pour la demande "Réparation de pannes électriques"',
         ),
         time: DateTime.now().subtract(const Duration(hours: 2)),
         type: NotificationType.accepted,
@@ -45,7 +45,7 @@ class NotificationsScreen extends StatelessWidget {
       ),
       _NotificationItem(
         id: '4',
-        title: l10n.tr('تذكير بالاشتراك', 'Rappel d abonnement'),
+        title: l10n.tr('تذكير بالاشتراك', "Rappel d'abonnement"),
         body: l10n.tr(
           'اشتراكك سينتهي خلال 5 أيام، جدد الآن للاستمرار',
           'Votre abonnement expire dans 5 jours, renouvelez maintenant',
@@ -62,7 +62,7 @@ class NotificationsScreen extends StatelessWidget {
         ),
         body: l10n.tr(
           'هناك طلب جديد في الجزائر العاصمة - باب الوادي',
-          'Il y a une nouvelle demande a Alger - Bab El Oued',
+          'Il y a une nouvelle demande à Alger - Bab El Oued',
         ),
         time: DateTime.now().subtract(const Duration(days: 2)),
         type: NotificationType.request,

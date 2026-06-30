@@ -102,37 +102,37 @@ class HelpSupportScreen extends StatelessWidget {
             _FAQItem(
               question: l10n.tr(
                 'كيف أنشئ طلب جديد؟',
-                'Comment creer une nouvelle demande ?',
+                'Comment créer une nouvelle demande ?',
               ),
               answer: l10n.tr(
                 'من الصفحة الرئيسية، اضغط على زر "طلب جديد" (+) ثم أدخل تفاصيل الطلب والموقع والصور إن وجدت.',
-                'Depuis l accueil, appuyez sur "Nouvelle demande" (+), puis ajoutez les details, la localisation et des photos si besoin.',
+                'Depuis l accueil, appuyez sur "Nouvelle demande" (+), puis ajoutez les détails, la localisation et des photos si besoin.',
               ),
             ),
             _FAQItem(
               question: l10n.tr(
                 'كيف أشترك كفني كهربائي؟',
-                'Comment souscrire comme electricien ?',
+                'Comment souscrire comme électricien ?',
               ),
               answer: l10n.tr(
                 'قم بإنشاء حساب كفني كهربائي، ثم اذهب لصفحة الاشتراك وقم بتحويل 3000 د.ج عبر BaridiMob وارفع صورة إثبات الدفع.',
-                'Creez un compte electricien, allez a la page abonnement, transferez 3000 DA via BaridiMob puis envoyez la preuve.',
+                'Créez un compte électricien, allez à la page abonnement, transférez 3000 DA via BaridiMob puis envoyez la preuve.',
               ),
             ),
             _FAQItem(
               question: l10n.tr(
                 'متى يتم تفعيل اشتراكي؟',
-                'Quand mon abonnement est-il active ?',
+                'Quand mon abonnement est-il activé ?',
               ),
               answer: l10n.tr(
                 'يتم مراجعة إثبات الدفع خلال 24 ساعة كحد أقصى، وسيتم تفعيل اشتراكك فور الموافقة.',
-                'La preuve de paiement est verifiee sous 24h maximum, puis votre abonnement est active.',
+                'La preuve de paiement est vérifiée sous 24h maximum, puis votre abonnement est activé.',
               ),
             ),
             _FAQItem(
               question: l10n.tr(
                 'كيف أتواصل مع الكهربائي؟',
-                'Comment contacter un electricien ?',
+                'Comment contacter un électricien ?',
               ),
               answer: l10n.tr(
                 'بعد قبول عرض من كهربائي، يمكنك التواصل معه مباشرة عبر المحادثة داخل التطبيق.',
@@ -146,7 +146,7 @@ class HelpSupportScreen extends StatelessWidget {
               ),
               answer: l10n.tr(
                 'نعم، يمكنك إغلاق الطلب في أي وقت من صفحة تفاصيل الطلب.',
-                'Oui, vous pouvez fermer une demande a tout moment depuis la page de details.',
+                'Oui, vous pouvez fermer une demande à tout moment depuis la page de détails.',
               ),
             ),
             _FAQItem(

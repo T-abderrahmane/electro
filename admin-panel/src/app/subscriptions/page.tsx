@@ -64,7 +64,7 @@ export default function SubscriptionsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">{tx('إدارة الاشتراكات', 'Gestion des abonnements')}</h1>
-        <p className="text-gray-500 mt-1">{tx('مراجعة طلبات الاشتراك وتفعيلها', 'Verifier les demandes et activer les abonnements')}</p>
+        <p className="text-gray-500 mt-1">{tx('مراجعة طلبات الاشتراك وتفعيلها', 'Vérifier les demandes et activer les abonnements')}</p>
       </div>
 
       {/* Stats */}
@@ -120,7 +120,7 @@ export default function SubscriptionsPage() {
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-center gap-3">
           <AlertTriangle className="text-amber-600" size={24} />
           <div>
-            <p className="font-medium text-amber-800">{tx(`يوجد ${pendingCount} طلبات اشتراك في الانتظار`, `${pendingCount} demandes d abonnement en attente`)}</p>
+            <p className="font-medium text-amber-800">{tx(`يوجد ${pendingCount} طلبات اشتراك في الانتظار`, `${pendingCount} demandes d'abonnement en attente`)}</p>
             <p className="text-sm text-amber-600">{tx('يرجى مراجعتها والموافقة عليها أو رفضها', 'Veuillez les verifier puis approuver ou refuser')}</p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function SubscriptionsPage() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder={tx('البحث باسم الكهربائي...', 'Rechercher par nom d electricien...')}
+              placeholder={tx('البحث باسم الكهربائي...', "Rechercher par nom d'électricien...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -169,7 +169,7 @@ export default function SubscriptionsPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الكهربائي', 'Electricien')}</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الكهربائي', 'Électricien')}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('المبلغ', 'Montant')}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('التاريخ', 'Date')}</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">{tx('الحالة', 'Statut')}</th>
@@ -267,7 +267,7 @@ export default function SubscriptionsPage() {
 
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-500">{tx('الكهربائي', 'Electricien')}</span>
+                  <span className="text-gray-500">{tx('الكهربائي', 'Électricien')}</span>
                   <span className="font-medium">{selectedPaymentData.electricianName}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
@@ -357,7 +357,7 @@ export default function SubscriptionsPage() {
           <div className="bg-white rounded-xl max-w-md w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">{tx('تفعيل اشتراك يدوي', 'Activation manuelle d abonnement')}</h3>
+                <h3 className="text-xl font-bold text-gray-900">{tx('تفعيل اشتراك يدوي', "Activation manuelle d'abonnement")}</h3>
                 <button
                   onClick={() => {
                     setManualActivation(null);
@@ -371,13 +371,13 @@ export default function SubscriptionsPage() {
 
               <div className="space-y-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{tx('اختر الكهربائي', 'Choisir l electricien')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{tx('اختر الكهربائي', "Choisir l'électricien")}</label>
                   <select
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={manualActivation === 'new' ? '' : manualActivation}
                     onChange={(e) => setManualActivation(e.target.value)}
                   >
-                    <option value="">{tx('اختر كهربائي...', 'Selectionner un electricien...')}</option>
+                    <option value="">{tx('اختر كهربائي...', "Sélectionner un électricien...")}</option>
                     {electricians.map(elec => (
                       <option key={elec.id} value={elec.id}>
                         {elec.name} - {elec.wilaya}
@@ -387,7 +387,7 @@ export default function SubscriptionsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{tx('مدة الاشتراك (بالأشهر)', 'Duree d abonnement (mois)')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{tx('مدة الاشتراك (بالأشهر)', "Durée d'abonnement (mois)")}</label>
                   <select
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={activationMonths}

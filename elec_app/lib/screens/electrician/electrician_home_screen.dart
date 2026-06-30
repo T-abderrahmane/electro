@@ -125,6 +125,12 @@ class _RequestsTab extends StatelessWidget {
                       onPressed: () {},
                     ),
                     IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () async {
+                        await context.read<AppProvider>().refreshData();
+                      },
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.language),
                       onPressed: () {
                         context.read<AppProvider>().toggleLanguage();
@@ -777,6 +783,66 @@ class _JobCard extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: Text(l10n.tr('إنهاء العمل', 'Terminer le travail')),
+                    content: Text(
+                      l10n.tr(
+                        'هل تريد تأكيد انتهاء التصليح؟ سيتم نقل الطلب إلى سجل الأعمال.',
+                        'Confirmez-vous la fin de la réparation ? La demande sera déplacée vers l historique des travaux.',
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext, false),
+                        child: Text(l10n.tr('إلغاء', 'Annuler')),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(dialogContext, true),
+                        child: Text(l10n.tr('تأكيد', 'Confirmer')),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed == true && context.mounted) {
+                  final success = await context
+                      .read<AppProvider>()
+                      .completeRequest(request.id);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          success
+                              ? l10n.tr(
+                                'تم إنهاء العمل بنجاح',
+                                'Travail terminé avec succès',
+                              )
+                              : l10n.tr(
+                                'تعذر إنهاء العمل',
+                                'Impossible de terminer le travail',
+                              ),
+                        ),
+                        backgroundColor:
+                            success ? AppColors.success : AppColors.error,
+                      ),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.check_circle_outline),
+              label: Text(l10n.tr('إنهاء التصليح', 'Terminer la réparation')),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.success,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -808,6 +874,12 @@ class _ProfileTab extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.tr('حسابي', 'Mon compte')),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await context.read<AppProvider>().refreshData();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.language),
             onPressed: () {

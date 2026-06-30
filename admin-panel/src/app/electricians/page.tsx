@@ -19,7 +19,6 @@ import {
   Image as ImageIcon,
   Calendar
 } from 'lucide-react';
-
 export default function ElectriciansPage() {
   const { users, updateUserStatus, activateSubscription } = useAdmin();
   const { language } = useUI();
@@ -29,12 +28,13 @@ export default function ElectriciansPage() {
   const [selectedElectrician, setSelectedElectrician] = useState<string | null>(null);
   const [showImageModal, setShowImageModal] = useState(false);
 
-  const electricians = users.filter(user => user.role === 'electrician');
+  const electricians = users.filter((user) => user.role === 'electrician');
 
-  const filteredElectricians = electricians.filter(elec => {
-    const matchesSearch = elec.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         elec.phone.includes(searchTerm) ||
-                         elec.wilaya?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredElectricians = electricians.filter((elec) => {
+    const matchesSearch =
+      elec.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      elec.phone.includes(searchTerm) ||
+      elec.wilaya?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || elec.subscriptionStatus === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -46,29 +46,29 @@ export default function ElectriciansPage() {
       case 'pending':
         return { label: tx('معلق', 'En attente'), color: 'bg-amber-100 text-amber-700', icon: Clock };
       case 'expired':
-        return { label: tx('منتهي', 'Expire'), color: 'bg-red-100 text-red-700', icon: XCircle };
+        return { label: tx('منتهي', 'Expiré'), color: 'bg-red-100 text-red-700', icon: XCircle };
       case 'inactive':
       default:
-        return { label: tx('غير مشترك', 'Non abonne'), color: 'bg-gray-100 text-gray-700', icon: XCircle };
+        return { label: tx('غير مشترك', 'Non abonné'), color: 'bg-gray-100 text-gray-700', icon: XCircle };
     }
   };
 
-  const selectedElectricianData = selectedElectrician 
-    ? electricians.find(e => e.id === selectedElectrician) 
+  const selectedElectricianData = selectedElectrician
+    ? electricians.find((e) => e.id === selectedElectrician)
     : null;
 
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{tx('التحقق من الكهربائيين', 'Verification des electriciens')}</h1>
-        <p className="text-gray-500 mt-1">{tx('عرض وإدارة حسابات الكهربائيين والتحقق من هوياتهم', 'Afficher et gerer les comptes electriciens et verifier leurs identites')}</p>
+        <h1 className="text-2xl font-bold text-gray-900">{tx('التحقق من الكهربائيين', 'Vérification des électriciens')}</h1>
+        <p className="text-gray-500 mt-1">{tx('عرض وإدارة حسابات الكهربائيين والتحقق من هوياتهم', 'Afficher et gérer les comptes électriciens et vérifier leurs identités')}</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-          <p className="text-gray-500 text-sm">{tx('إجمالي الكهربائيين', 'Total electriciens')}</p>
+          <p className="text-gray-500 text-sm">{tx('إجمالي الكهربائيين', 'Total électriciens')}</p>
           <p className="text-2xl font-bold text-gray-900">{electricians.length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
@@ -84,13 +84,13 @@ export default function ElectriciansPage() {
           </p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-          <p className="text-gray-500 text-sm">{tx('منتهية', 'Expires')}</p>
+          <p className="text-gray-500 text-sm">{tx('منتهية', 'Expirés')}</p>
           <p className="text-2xl font-bold text-red-600">
             {electricians.filter(e => e.subscriptionStatus === 'expired').length}
           </p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-          <p className="text-gray-500 text-sm">{tx('غير مشتركين', 'Non abonnes')}</p>
+          <p className="text-gray-500 text-sm">{tx('غير مشتركين', 'Non abonnés')}</p>
           <p className="text-2xl font-bold text-gray-600">
             {electricians.filter(e => e.subscriptionStatus === 'inactive' || !e.subscriptionStatus).length}
           </p>
@@ -104,7 +104,7 @@ export default function ElectriciansPage() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder={tx('البحث بالاسم، الهاتف أو الولاية...', 'Rechercher par nom, telephone ou wilaya...')}
+              placeholder={tx('البحث بالاسم، الهاتف أو الولاية...', 'Rechercher par nom, téléphone ou wilaya...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -121,8 +121,8 @@ export default function ElectriciansPage() {
               <option value="all">{tx('جميع الحالات', 'Tous les statuts')}</option>
               <option value="active">{tx('اشتراك نشط', 'Abonnement actif')}</option>
               <option value="pending">{tx('في الانتظار', 'En attente')}</option>
-              <option value="expired">{tx('منتهي', 'Expire')}</option>
-              <option value="inactive">{tx('غير مشترك', 'Non abonne')}</option>
+              <option value="expired">{tx('منتهي', 'Expiré')}</option>
+              <option value="inactive">{tx('غير مشترك', 'Non abonné')}</option>
             </select>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function ElectriciansPage() {
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <Briefcase size={16} className="text-gray-400" />
-                    <span className="text-sm">{elec.yearsExperience} {tx('سنوات خبرة', 'ans d experience')}</span>
+                    <span className="text-sm">{elec.yearsExperience} {tx('سنوات خبرة', "ans d'expérience")}</span>
                   </div>
                   {elec.subscriptionEndDate && (
                     <div className="flex items-center gap-2 text-gray-600">
@@ -185,7 +185,7 @@ export default function ElectriciansPage() {
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                   >
                     <Eye size={16} />
-                    <span>{tx('عرض التفاصيل', 'Voir les details')}</span>
+                    <span>{tx('عرض التفاصيل', 'Voir les détails')}</span>
                   </button>
                   {elec.idCardImage && (
                     <button
@@ -208,7 +208,7 @@ export default function ElectriciansPage() {
       {filteredElectricians.length === 0 && (
         <div className="bg-white rounded-xl p-12 text-center text-gray-500">
           <User size={48} className="mx-auto mb-4 text-gray-300" />
-          <p>{tx('لا توجد نتائج', 'Aucun resultat')}</p>
+          <p>{tx('لا توجد نتائج', 'Aucun résultat')}</p>
         </div>
       )}
 
@@ -219,7 +219,7 @@ export default function ElectriciansPage() {
             <div className="p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">{tx('تفاصيل الكهربائي', 'Details de l electricien')}</h3>
+                <h3 className="text-xl font-bold text-gray-900">{tx('تفاصيل الكهربائي', "Détails de l'électricien")}</h3>
                 <button
                   onClick={() => setSelectedElectrician(null)}
                   className="p-2 hover:bg-gray-100 rounded-lg"
@@ -255,11 +255,11 @@ export default function ElectriciansPage() {
                   <span className="font-medium">{selectedElectricianData.commune}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-500">{tx('سنوات الخبرة', 'Annees d experience')}</span>
+                  <span className="text-gray-500">{tx('سنوات الخبرة', "Années d'expérience")}</span>
                   <span className="font-medium">{selectedElectricianData.yearsExperience} {tx('سنوات', 'ans')}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-500">{tx('تاريخ التسجيل', 'Date d inscription')}</span>
+                  <span className="text-gray-500">{tx('تاريخ التسجيل', "Date d'inscription")}</span>
                   <span className="font-medium">{selectedElectricianData.createdAt}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
@@ -272,7 +272,7 @@ export default function ElectriciansPage() {
                 </div>
                 {selectedElectricianData.subscriptionStartDate && (
                   <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-500">{tx('بداية الاشتراك', 'Debut abonnement')}</span>
+                    <span className="text-gray-500">{tx('بداية الاشتراك', "Début abonnement")}</span>
                     <span className="font-medium">{selectedElectricianData.subscriptionStartDate}</span>
                   </div>
                 )}
@@ -287,14 +287,14 @@ export default function ElectriciansPage() {
               {/* ID Card */}
               {selectedElectricianData.idCardImage && (
                 <div className="mb-6">
-                  <h5 className="font-medium text-gray-900 mb-2">{tx('صورة بطاقة الهوية', 'Image de la piece d identite')}</h5>
+                  <h5 className="font-medium text-gray-900 mb-2">{tx('صورة بطاقة الهوية', "Image de la pièce d'identité")}</h5>
                   <div 
                     className="bg-gray-100 rounded-lg h-40 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
                     onClick={() => setShowImageModal(true)}
                   >
                     <div className="text-center">
                       <ImageIcon size={32} className="mx-auto text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">{tx('انقر لعرض الصورة', 'Cliquer pour afficher l image')}</span>
+                      <span className="text-sm text-gray-500">{tx('انقر لعرض الصورة', "Cliquer pour afficher l'image")}</span>
                     </div>
                   </div>
                 </div>
@@ -331,7 +331,7 @@ export default function ElectriciansPage() {
                     }}
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    {tx('تفعيل الاشتراك (شهر)', 'Activer l abonnement (1 mois)')}
+                    {tx('تفعيل الاشتراك (شهر)', "Activer l'abonnement (1 mois)")}
                   </button>
                 )}
               </div>
@@ -356,7 +356,7 @@ export default function ElectriciansPage() {
             <div className="bg-gray-200 rounded-xl h-96 flex items-center justify-center">
               <div className="text-center">
                 <ImageIcon size={64} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">{tx('صورة بطاقة الهوية', 'Image de la piece d identite')}</p>
+                <p className="text-gray-500">{tx('صورة بطاقة الهوية', "Image de la pièce d'identité")}</p>
                 <p className="text-sm text-gray-400 mt-2">{selectedElectricianData.idCardImage}</p>
               </div>
             </div>

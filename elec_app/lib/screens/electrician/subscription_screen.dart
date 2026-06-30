@@ -117,7 +117,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         content: Text(
           l10n.tr(
             'تم إرسال إثبات الدفع بنجاح',
-            'Preuve de paiement envoyee avec succes',
+            'Preuve de paiement envoyée avec succès',
           ),
         ),
         backgroundColor: AppColors.success,
@@ -200,13 +200,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   _FeatureItem(
                     text: l10n.tr(
                       'الوصول لجميع الطلبات',
-                      'Acces a toutes les demandes',
+                      'Accès à toutes les demandes',
                     ),
                   ),
                   _FeatureItem(
                     text: l10n.tr(
                       'إرسال عروض غير محدودة',
-                      'Envoi d offres illimite',
+                      'Envoi d’offres illimité',
                     ),
                   ),
                   _FeatureItem(
@@ -282,7 +282,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     number: '4',
                     text: l10n.tr(
                       'ارفع الصورة أدناه',
-                      'Televersez l image ci-dessous',
+                      "Téléversez l'image ci-dessous",
                     ),
                   ),
                 ],
@@ -423,7 +423,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Text(
                       l10n.tr(
                         'سيتم تفعيل اشتراكك خلال 24 ساعة بعد التحقق من الدفع',
-                        'Votre abonnement sera active sous 24h apres verification',
+                        'Votre abonnement sera activé sous 24h après vérification',
                       ),
                       style: TextStyle(fontSize: 12, color: AppColors.accent),
                     ),
@@ -480,7 +480,7 @@ class _SubscriptionStatusCard extends StatelessWidget {
         break;
       case SubscriptionStatus.expired:
         color = AppColors.error;
-        title = l10n.tr('اشتراكك منتهي', 'Votre abonnement a expire');
+        title = l10n.tr('اشتراكك منتهي', 'Votre abonnement a expiré');
         subtitle = l10n.tr(
           'قم بتجديد اشتراكك للاستمرار',
           'Renouvelez votre abonnement pour continuer',
@@ -489,10 +489,10 @@ class _SubscriptionStatusCard extends StatelessWidget {
         break;
       case SubscriptionStatus.inactive:
         color = AppColors.inactive;
-        title = l10n.tr('غير مشترك', 'Non abonne');
+        title = l10n.tr('غير مشترك', 'Non abonné');
         subtitle = l10n.tr(
           'اشترك الآن للوصول لكل الميزات',
-          'Abonnez-vous maintenant pour acceder a toutes les fonctionnalites',
+          'Abonnez-vous maintenant pour accéder à toutes les fonctionnalités',
         );
         icon = Icons.cancel;
         break;

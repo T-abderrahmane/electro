@@ -248,7 +248,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                                 Text(
                                   l10n.tr(
                                     'تم إرسال عرضك',
-                                    'Votre offre a ete envoyee',
+                                    'Votre offre a été envoyée',
                                   ),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -258,7 +258,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                                 Text(
                                   l10n.tr(
                                     'في انتظار رد العميل على عرضك',
-                                    'En attente de la reponse du client',
+                                    'En attente de la réponse du client',
                                   ),
                                   style: TextStyle(
                                     fontSize: 12,
@@ -342,7 +342,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
               controller: _priceController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: l10n.tr('السعر المقترح (د.ج)', 'Prix propose (DA)'),
+                labelText: l10n.tr('السعر المقترح (د.ج)', 'Prix proposé (DA)'),
                 prefixIcon: const Icon(Icons.monetization_on),
                 hintText: l10n.tr('مثال: 5000', 'Ex: 5000'),
               ),
@@ -350,7 +350,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                 if (value == null || value.isEmpty) {
                   return l10n.tr(
                     'يرجى إدخال السعر المقترح',
-                    'Veuillez saisir le prix propose',
+                    'Veuillez saisir le prix proposé',
                   );
                 }
                 if (double.tryParse(value) == null) {
@@ -369,7 +369,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
               decoration: InputDecoration(
                 labelText: l10n.tr(
                   'مدة التنفيذ المقدرة (بالساعات)',
-                  'Duree estimee (heures)',
+                  'Durée estimée (heures)',
                 ),
                 prefixIcon: const Icon(Icons.timer),
                 hintText: l10n.tr('مثال: 2', 'Ex: 2'),
@@ -378,7 +378,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                 if (value == null || value.isEmpty) {
                   return l10n.tr(
                     'يرجى إدخال مدة التنفيذ',
-                    'Veuillez saisir la duree',
+                    'Veuillez saisir la durée',
                   );
                 }
                 if (int.tryParse(value) == null) {
@@ -402,7 +402,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                 prefixIcon: const Icon(Icons.message),
                 hintText: l10n.tr(
                   'أضف تفاصيل إضافية عن عرضك...',
-                  'Ajoutez des details supplementaires...',
+                  'Ajoutez des détails supplémentaires...',
                 ),
                 alignLabelWithHint: true,
               ),
@@ -428,7 +428,7 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
                         : Text(
                           l10n.tr(
                             'تأكيد وإرسال العرض',
-                            'Confirmer et envoyer l offre',
+                            "Confirmer et envoyer l'offre",
                           ),
                         ),
               ),
@@ -454,15 +454,15 @@ class _RequestPreviewScreenState extends State<RequestPreviewScreen> {
     // Pre-fetch all localized strings before async operations
     final defaultMessage = l10n.tr(
       'أنا جاهز للعمل على هذا الطلب',
-      'Je suis pret a intervenir sur cette demande',
+      'Je suis prêt à intervenir sur cette demande',
     );
     final errorMessage = l10n.tr(
       'لا يمكن إرسال العرض حاليا. تحقق من تفعيل الحساب أو الاشتراك.',
-      'Impossible d envoyer l offre maintenant. Verifiez l activation du compte ou de l abonnement.',
+      "Impossible d'envoyer l'offre maintenant. Vérifiez l'activation du compte ou de l'abonnement.",
     );
     final successMessage = l10n.tr(
       'تم إرسال عرضك بنجاح',
-      'Votre offre a ete envoyee avec succes',
+      'Votre offre a été envoyée avec succès',
     );
 
     if (user == null) {
