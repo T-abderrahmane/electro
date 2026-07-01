@@ -247,9 +247,17 @@ List<ChatMessage> getMessagesForRequest(String requestId) {
 }
 
 List<ServiceRequest> getClientRequests(String clientId) {
-  return mockRequests.where((r) => r.clientId == clientId).toList();
+  return mockRequests
+      .where((r) => r.clientId == clientId && r.status != RequestStatus.closed)
+      .toList();
 }
 
 List<ServiceRequest> getElectricianAssignedRequests(String electricianId) {
-  return mockRequests.where((r) => r.assignedElectricianId == electricianId).toList();
+  return mockRequests
+      .where(
+        (r) =>
+            r.assignedElectricianId == electricianId &&
+            r.status != RequestStatus.closed,
+      )
+      .toList();
 }

@@ -561,14 +561,44 @@ class AppProvider extends ChangeNotifier {
   // Client's requests
   List<ServiceRequest> get clientRequests {
     if (_currentUser == null) return [];
-    return _requests.where((r) => r.clientId == _currentUser!.id).toList();
+    return _requests
+        .where(
+          (r) =>
+              r.clientId == _currentUser!.id && r.status != RequestStatus.closed,
+        )
+        .toList();
+  }
+
+  List<ServiceRequest> get clientRequestHistory {
+    if (_currentUser == null) return [];
+    return _requests
+        .where(
+          (r) =>
+              r.clientId == _currentUser!.id && r.status == RequestStatus.closed,
+        )
+        .toList();
   }
 
   // Electrician's assigned requests
   List<ServiceRequest> get electricianAssignedRequests {
     if (_currentUser == null) return [];
     return _requests
-        .where((r) => r.assignedElectricianId == _currentUser!.id)
+        .where(
+          (r) =>
+              r.assignedElectricianId == _currentUser!.id &&
+              r.status != RequestStatus.closed,
+        )
+        .toList();
+  }
+
+  List<ServiceRequest> get electricianWorkHistory {
+    if (_currentUser == null) return [];
+    return _requests
+        .where(
+          (r) =>
+              r.assignedElectricianId == _currentUser!.id &&
+              r.status == RequestStatus.closed,
+        )
         .toList();
   }
 

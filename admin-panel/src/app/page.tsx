@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -33,17 +33,7 @@ import {
   Star,
   Bell,
 } from "lucide-react";
-import {
-  dashboardStats,
-  requestsPerWilaya,
-  electriciansPerWilaya,
-  monthlyRevenue,
-  subscriptionStatus,
-  requestStatus,
-  weeklyTrend,
-  topElectricians,
-  recentActivity,
-} from "@/data/mockData";
+import { useAdmin } from "@/context/AdminContext";
 import { useUI } from "@/context/UIContext";
 
 // Stat Card Component
@@ -96,11 +86,356 @@ const CustomTooltip = ({ active, payload, label, locale }: any) => {
   return null;
 };
 
+const ARABIC_MONTHS = [
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
+];
+
+const ARABIC_DAYS = [
+  "الأحد",
+  "الإثنين",
+  "الثلاثاء",
+  "الأربعاء",
+  "الخميس",
+  "الجمعة",
+  "السبت",
+];
+
+function formatRelativeTime(date: Date, language: string) {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const minutes = Math.max(1, Math.floor(diffMs / 60000));
+  if (minutes < 60) {
+    return language === "fr" ? `il y a ${minutes} min` : `منذ ${minutes} دقيقة`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return language === "fr" ? `il y a ${hours} h` : `منذ ${hours} ساعة`;
+  }
+
+  const days = Math.floor(hours / 24);
+  return language === "fr" ? `il y a ${days} j` : `منذ ${days} يوم`;
+}
+
+function formatMonthLabel(date: Date) {
+  return ARABIC_MONTHS[date.getMonth()];
+}
+
+function startOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function parseDate(value?: string) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export default function StatisticsPage() {
+  const { users, payments, requests, offers } = useAdmin();
   const { language } = useUI();
   const [selectedPeriod, setSelectedPeriod] = React.useState("month");
   const tx = (ar: string, fr: string) => (language === "fr" ? fr : ar);
   const locale = language === "fr" ? "fr-FR" : "ar-DZ";
+
+  const dashboardData = useMemo(() => {
+    const now = new Date();
+    const currentDay = startOfDay(now);
+    const currentStart = new Date(currentDay);
+    currentStart.setDate(currentStart.getDate() - 30);
+    const previousStart = new Date(currentDay);
+    previousStart.setDate(previousStart.getDate() - 60);
+
+    const calcTrend = (currentCount: number, previousCount: number) => {
+      if (previousCount === 0) {
+        return currentCount === 0 ? 0 : 100;
+      }
+      return Number((((currentCount - previousCount) / previousCount) * 100).toFixed(1));
+    };
+
+    const usersByRole = {
+      clients: users.filter((user) => user.role === "client"),
+      electricians: users.filter((user) => user.role === "electrician"),
+    };
+
+    const electriciansByWilaya = new Map<string, { active: number; inactive: number }>();
+    usersByRole.electricians.forEach((electrician) => {
+      const current = electriciansByWilaya.get(electrician.wilaya ?? "") ?? { active: 0, inactive: 0 };
+      const isActive = electrician.accountStatus === "active";
+      electriciansByWilaya.set(electrician.wilaya ?? "", {
+        active: current.active + (isActive ? 1 : 0),
+        inactive: current.inactive + (isActive ? 0 : 1),
+      });
+    });
+
+    const requestsByWilaya = new Map<string, number>();
+    requests.forEach((request) => {
+      requestsByWilaya.set(request.wilaya, (requestsByWilaya.get(request.wilaya) ?? 0) + 1);
+    });
+
+    const requestStatusCounts = new Map<string, number>();
+    requests.forEach((request) => {
+      requestStatusCounts.set(request.status, (requestStatusCounts.get(request.status) ?? 0) + 1);
+    });
+
+    const subscriptionStatusCounts = new Map<string, number>();
+    usersByRole.electricians.forEach((electrician) => {
+      const status = electrician.subscriptionStatus ?? "inactive";
+      subscriptionStatusCounts.set(status, (subscriptionStatusCounts.get(status) ?? 0) + 1);
+    });
+
+    const lastTwelveMonths = Array.from({ length: 12 }, (_, index) => {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - 11 + index, 1);
+      return {
+        key: `${monthDate.getFullYear()}-${monthDate.getMonth()}`,
+        month: formatMonthLabel(monthDate),
+        revenue: 0,
+        subscriptions: 0,
+      };
+    });
+
+    payments.forEach((payment) => {
+      if (payment.status !== "approved") {
+        return;
+      }
+
+      const paymentDate = parseDate(payment.createdAt);
+      if (!paymentDate) {
+        return;
+      }
+
+      const key = `${paymentDate.getFullYear()}-${paymentDate.getMonth()}`;
+      const target = lastTwelveMonths.find((entry) => entry.key === key);
+      if (target) {
+        target.revenue += payment.amount;
+        target.subscriptions += 1;
+      }
+    });
+
+    const lastSevenDays = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(currentDay);
+      date.setDate(date.getDate() - 6 + index);
+      return {
+        key: date.toISOString().slice(0, 10),
+        day: ARABIC_DAYS[date.getDay()],
+        requests: 0,
+        offers: 0,
+      };
+    });
+
+    requests.forEach((request) => {
+      const requestDate = parseDate(request.createdAt);
+      if (!requestDate) return;
+      const target = lastSevenDays.find((entry) => entry.key === requestDate.toISOString().slice(0, 10));
+      if (target) {
+        target.requests += 1;
+      }
+    });
+
+    offers.forEach((offer) => {
+      const offerDate = parseDate(offer.createdAt);
+      if (!offerDate) return;
+      const target = lastSevenDays.find((entry) => entry.key === offerDate.toISOString().slice(0, 10));
+      if (target) {
+        target.offers += 1;
+      }
+    });
+
+    const electriciansSorted = [...usersByRole.electricians].sort((a, b) => {
+      const completedA = a.completedJobs ?? 0;
+      const completedB = b.completedJobs ?? 0;
+      if (completedB !== completedA) return completedB - completedA;
+      const ratingA = a.rating ?? 0;
+      const ratingB = b.rating ?? 0;
+      if (ratingB !== ratingA) return ratingB - ratingA;
+      return a.name.localeCompare(b.name, "ar");
+    });
+
+    const electricianById = new Map(usersByRole.electricians.map((user) => [user.id, user] as const));
+
+    const recentActivity = [
+      ...requests
+        .map((request) => ({
+          date: parseDate(request.createdAt),
+          type: "request" as const,
+          message: `طلب جديد للخدمات الكهربائية - ${request.wilaya}`,
+          messageFr: `Nouvelle demande de services electriques - ${request.wilaya}`,
+        }))
+        .filter((item) => item.date),
+      ...offers
+        .map((offer) => {
+          const request = requests.find((entry) => entry.id === offer.requestId);
+          return {
+            date: parseDate(offer.createdAt),
+            type: "offer" as const,
+            message: `عرض جديد مقدم - ${request?.wilaya ?? offer.electricianName}`,
+            messageFr: `Nouvelle offre soumise - ${request?.wilaya ? request.wilaya : offer.electricianName}`,
+          };
+        })
+        .filter((item) => item.date),
+      ...payments
+        .map((payment) => {
+          const electrician = electricianById.get(payment.electricianId);
+          const wilaya = electrician?.wilaya ?? payment.electricianName;
+          return {
+            date: parseDate(payment.createdAt),
+            type: "subscription" as const,
+            message:
+              payment.status === "pending"
+                ? `دفعة معلقة تنتظر المراجعة - ${payment.electricianName}`
+                : `اشتراك جديد من ${payment.electricianName} - ${wilaya}`,
+            messageFr:
+              payment.status === "pending"
+                ? `Paiement en attente de verification - ${payment.electricianName}`
+                : `Nouvel abonnement de ${payment.electricianName} - ${wilaya}`,
+          };
+        })
+        .filter((item) => item.date),
+    ]
+      .sort((left, right) => (right.date!.getTime() - left.date!.getTime()))
+      .slice(0, 5)
+      .map((item) => ({
+        ...item,
+        time: formatRelativeTime(item.date!, language),
+      }));
+
+    const dashboardStats = {
+      totalUsers: users.length,
+      totalElectricians: usersByRole.electricians.length,
+      activeSubscriptions: usersByRole.electricians.filter((user) => user.subscriptionStatus === "active").length,
+      pendingPayments: payments.filter((payment) => payment.status === "pending").length,
+      totalRequests: requests.length,
+      totalOffers: offers.length,
+    };
+
+    return {
+      dashboardStats,
+      requestsPerWilaya: Array.from(requestsByWilaya.entries())
+        .map(([arabicName, value]) => ({ arabicName, value }))
+        .sort((left, right) => right.value - left.value),
+      electriciansPerWilaya: Array.from(electriciansByWilaya.entries())
+        .map(([arabicName, counts]) => ({ arabicName, ...counts }))
+        .sort((left, right) => right.active + right.inactive - (left.active + left.inactive)),
+      monthlyRevenue: lastTwelveMonths.map((entry) => ({ month: entry.month, revenue: entry.revenue, subscriptions: entry.subscriptions })),
+      subscriptionStatus: Array.from(subscriptionStatusCounts.entries()).map(([name, value]) => ({
+        name:
+          name === "active"
+            ? "نشط"
+            : name === "pending"
+              ? "معلق"
+              : name === "expired"
+                ? "منتهي"
+                : "غير نشط",
+        value,
+        color:
+          name === "active"
+            ? "#22c55e"
+            : name === "pending"
+              ? "#f59e0b"
+              : name === "expired"
+                ? "#ef4444"
+                : "#9ca3af",
+      })),
+      requestStatus: Array.from(requestStatusCounts.entries()).map(([name, value]) => ({
+        name:
+          name === "open"
+            ? "مفتوح"
+            : name === "assigned"
+              ? "قيد التنفيذ"
+              : "مغلق",
+        value,
+        color:
+          name === "open"
+            ? "#3b82f6"
+            : name === "assigned"
+              ? "#f59e0b"
+              : "#22c55e",
+      })),
+      weeklyTrend: lastSevenDays,
+      topElectricians: electriciansSorted.slice(0, 5).map((electrician) => ({
+        name: electrician.name,
+        wilaya: electrician.wilaya ?? "-",
+        completedJobs: electrician.completedJobs ?? 0,
+        rating: electrician.rating ?? 0,
+      })),
+      recentActivity,
+      trends: {
+        totalUsers: calcTrend(
+          users.filter((user) => {
+            const createdAt = parseDate(user.createdAt);
+            return createdAt ? createdAt >= currentStart : false;
+          }).length,
+          users.filter((user) => {
+            const createdAt = parseDate(user.createdAt);
+            return createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+        totalElectricians: calcTrend(
+          usersByRole.electricians.filter((user) => {
+            const createdAt = parseDate(user.createdAt);
+            return createdAt ? createdAt >= currentStart : false;
+          }).length,
+          usersByRole.electricians.filter((user) => {
+            const createdAt = parseDate(user.createdAt);
+            return createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+        activeSubscriptions: calcTrend(
+          payments.filter((payment) => {
+            const createdAt = parseDate(payment.createdAt);
+            return payment.status === "approved" && createdAt ? createdAt >= currentStart : false;
+          }).length,
+          payments.filter((payment) => {
+            const createdAt = parseDate(payment.createdAt);
+            return payment.status === "approved" && createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+        pendingPayments: calcTrend(
+          payments.filter((payment) => {
+            const createdAt = parseDate(payment.createdAt);
+            return payment.status === "pending" && createdAt ? createdAt >= currentStart : false;
+          }).length,
+          payments.filter((payment) => {
+            const createdAt = parseDate(payment.createdAt);
+            return payment.status === "pending" && createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+        totalRequests: calcTrend(
+          requests.filter((request) => {
+            const createdAt = parseDate(request.createdAt);
+            return createdAt ? createdAt >= currentStart : false;
+          }).length,
+          requests.filter((request) => {
+            const createdAt = parseDate(request.createdAt);
+            return createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+        totalOffers: calcTrend(
+          offers.filter((offer) => {
+            const createdAt = parseDate(offer.createdAt);
+            return createdAt ? createdAt >= currentStart : false;
+          }).length,
+          offers.filter((offer) => {
+            const createdAt = parseDate(offer.createdAt);
+            return createdAt ? createdAt >= previousStart && createdAt < currentStart : false;
+          }).length,
+        ),
+      },
+    };
+  }, [language, offers, payments, requests, users]);
+
+  const dashboardStats = dashboardData.dashboardStats;
 
   const wilayaFr: Record<string, string> = {
     "الجزائر": "Alger",
@@ -118,49 +453,50 @@ export default function StatisticsPage() {
     "المسيلة": "M'Sila",
     "الجلفة": "Djelfa",
     "سكيكدة": "Skikda",
+    "البويرة": "Bouira",
   };
 
   const monthFr: Record<string, string> = {
     "يناير": "Janvier",
-    "فبراير": "Fevrier",
+    "فبراير": "Février",
     "مارس": "Mars",
     "أبريل": "Avril",
     "مايو": "Mai",
     "يونيو": "Juin",
     "يوليو": "Juillet",
-    "أغسطس": "Aout",
+    "أغسطس": "Août",
     "سبتمبر": "Septembre",
     "أكتوبر": "Octobre",
     "نوفمبر": "Novembre",
-    "ديسمبر": "Decembre",
+    "ديسمبر": "Décembre",
   };
 
   const dayFr: Record<string, string> = {
-    "السبت": "Samedi",
     "الأحد": "Dimanche",
     "الإثنين": "Lundi",
     "الثلاثاء": "Mardi",
     "الأربعاء": "Mercredi",
     "الخميس": "Jeudi",
     "الجمعة": "Vendredi",
+    "السبت": "Samedi",
   };
 
-  const localizedRequestsPerWilaya = requestsPerWilaya.map((item) => ({
+  const localizedRequestsPerWilaya = dashboardData.requestsPerWilaya.map((item) => ({
     ...item,
     label: language === "fr" ? (wilayaFr[item.arabicName] || item.arabicName) : item.arabicName,
   }));
 
-  const localizedElectriciansPerWilaya = electriciansPerWilaya.map((item) => ({
+  const localizedElectriciansPerWilaya = dashboardData.electriciansPerWilaya.map((item) => ({
     ...item,
     label: language === "fr" ? (wilayaFr[item.arabicName] || item.arabicName) : item.arabicName,
   }));
 
-  const localizedMonthlyRevenue = monthlyRevenue.map((item) => ({
+  const localizedMonthlyRevenue = dashboardData.monthlyRevenue.map((item) => ({
     ...item,
     month: language === "fr" ? (monthFr[item.month] || item.month) : item.month,
   }));
 
-  const localizedSubscriptionStatus = subscriptionStatus.map((item) => ({
+  const localizedSubscriptionStatus = dashboardData.subscriptionStatus.map((item) => ({
     ...item,
     name:
       item.name === "نشط"
@@ -172,7 +508,7 @@ export default function StatisticsPage() {
             : tx("غير نشط", "Inactif"),
   }));
 
-  const localizedRequestStatus = requestStatus.map((item) => ({
+  const localizedRequestStatus = dashboardData.requestStatus.map((item) => ({
     ...item,
     name:
       item.name === "مفتوح"
@@ -182,36 +518,19 @@ export default function StatisticsPage() {
           : tx("مغلق", "Fermé"),
   }));
 
-  const localizedWeeklyTrend = weeklyTrend.map((item) => ({
+  const localizedWeeklyTrend = dashboardData.weeklyTrend.map((item) => ({
     ...item,
     day: language === "fr" ? (dayFr[item.day] || item.day) : item.day,
   }));
 
-  const localizedTopElectricians = topElectricians.map((item) => ({
+  const localizedTopElectricians = dashboardData.topElectricians.map((item) => ({
     ...item,
     wilaya: language === "fr" ? (wilayaFr[item.wilaya] || item.wilaya) : item.wilaya,
   }));
 
-  const activityMsgFr: Record<string, string> = {
-    "اشتراك جديد من محمد أمين - الجزائر": "Nouvel abonnement de Mohamed Amine - Alger",
-    "طلب جديد للخدمات الكهربائية - وهران": "Nouvelle demande de services electriques - Oran",
-    "دفعة معلقة تنتظر المراجعة - كريم بلقاسم": "Paiement en attente de verification - Karim Belkacem",
-    "عرض جديد مقدم - قسنطينة": "Nouvelle offre soumise - Constantine",
-    "انتهاء اشتراك - يجب التجديد": "Abonnement expire - renouvellement requis",
-  };
-
-  const activityTimeFr: Record<string, string> = {
-    "منذ 5 دقائق": "il y a 5 min",
-    "منذ 12 دقيقة": "il y a 12 min",
-    "منذ 23 دقيقة": "il y a 23 min",
-    "منذ 34 دقيقة": "il y a 34 min",
-    "منذ 45 دقيقة": "il y a 45 min",
-  };
-
-  const localizedRecentActivity = recentActivity.map((item) => ({
+  const localizedRecentActivity = dashboardData.recentActivity.map((item) => ({
     ...item,
-    message: language === "fr" ? (activityMsgFr[item.message] || item.message) : item.message,
-    time: language === "fr" ? (activityTimeFr[item.time] || item.time) : item.time,
+    message: language === "fr" ? item.messageFr : item.message,
   }));
 
   return (
@@ -256,7 +575,7 @@ export default function StatisticsPage() {
             title={tx("إجمالي المستخدمين", "Total utilisateurs")}
             value={dashboardStats.totalUsers}
             icon={<Users className="w-6 h-6 text-blue-600" />}
-            trend={12.5}
+            trend={dashboardData.trends.totalUsers}
             color="bg-blue-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -265,7 +584,7 @@ export default function StatisticsPage() {
             title={tx("إجمالي الكهربائيين", "Total electriciens")}
             value={dashboardStats.totalElectricians}
             icon={<Wrench className="w-6 h-6 text-purple-600" />}
-            trend={8.3}
+            trend={dashboardData.trends.totalElectricians}
             color="bg-purple-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -274,7 +593,7 @@ export default function StatisticsPage() {
             title={tx("الاشتراكات النشطة", "Abonnements actifs")}
             value={dashboardStats.activeSubscriptions}
             icon={<CreditCard className="w-6 h-6 text-green-600" />}
-            trend={15.2}
+            trend={dashboardData.trends.activeSubscriptions}
             color="bg-green-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -283,7 +602,7 @@ export default function StatisticsPage() {
             title={tx("المدفوعات المعلقة", "Paiements en attente")}
             value={dashboardStats.pendingPayments}
             icon={<Clock className="w-6 h-6 text-amber-600" />}
-            trend={-5.4}
+            trend={dashboardData.trends.pendingPayments}
             color="bg-amber-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -292,7 +611,7 @@ export default function StatisticsPage() {
             title={tx("إجمالي الطلبات", "Total demandes")}
             value={dashboardStats.totalRequests}
             icon={<FileText className="w-6 h-6 text-cyan-600" />}
-            trend={22.1}
+            trend={dashboardData.trends.totalRequests}
             color="bg-cyan-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -301,7 +620,7 @@ export default function StatisticsPage() {
             title={tx("إجمالي العروض", "Total offres")}
             value={dashboardStats.totalOffers}
             icon={<MessageSquare className="w-6 h-6 text-rose-600" />}
-            trend={18.7}
+            trend={dashboardData.trends.totalOffers}
             color="bg-rose-100"
             trendText={tx("من الشهر الماضي", "vs mois precedent")}
             locale={locale}
@@ -648,13 +967,11 @@ export default function StatisticsPage() {
                   className="flex items-start gap-3 p-3 border-r-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   style={{
                     borderRightColor:
-                      activity.type === "subscription"
-                        ? "#22c55e"
-                        : activity.type === "request"
-                        ? "#3b82f6"
-                        : activity.type === "payment"
-                        ? "#f59e0b"
-                        : "#8b5cf6",
+                        activity.type === "subscription"
+                          ? "#22c55e"
+                          : activity.type === "request"
+                          ? "#3b82f6"
+                          : "#8b5cf6",
                   }}
                 >
                   <div
@@ -665,8 +982,6 @@ export default function StatisticsPage() {
                           ? "#dcfce7"
                           : activity.type === "request"
                           ? "#dbeafe"
-                          : activity.type === "payment"
-                          ? "#fef3c7"
                           : "#ede9fe",
                     }}
                   >
@@ -675,9 +990,6 @@ export default function StatisticsPage() {
                     )}
                     {activity.type === "request" && (
                       <FileText className="w-5 h-5 text-blue-600" />
-                    )}
-                    {activity.type === "payment" && (
-                      <DollarSign className="w-5 h-5 text-amber-600" />
                     )}
                     {activity.type === "offer" && (
                       <MessageSquare className="w-5 h-5 text-purple-600" />

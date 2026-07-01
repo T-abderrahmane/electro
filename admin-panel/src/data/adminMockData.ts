@@ -13,6 +13,8 @@ export interface User {
   subscriptionStatus?: 'active' | 'inactive' | 'expired' | 'pending';
   subscriptionStartDate?: string;
   subscriptionEndDate?: string;
+  rating?: number;
+  completedJobs?: number;
   accountStatus: 'active' | 'suspended';
   createdAt: string;
 }
